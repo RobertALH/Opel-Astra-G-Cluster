@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define PIN_IGNITION 0
-#define PIN_LIGHTS   1
+#define PIN_IGNITION PC0
+#define PIN_LIGHTS   PC1
 
 /**
  * @brief
