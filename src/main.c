@@ -10,6 +10,30 @@
 #include <relays.h>
 #include <usart.h>
 
+void Dashboard_Sweep(void) {
+    const uint32_t max_rpm   = 7000;
+    const uint32_t max_speed = 240;
+    const uint32_t steps     = 30;
+    const uint8_t  step_delay = 10;
+
+    for (uint32_t i = 0; i <= steps; i++) {
+        Set_RPM((max_rpm * i) / steps);
+        Set_Speed((max_speed * i) / steps);
+        Delay(step_delay);
+    }
+
+    Delay(100);
+
+    for (int32_t i = steps; i >= 0; i--) {
+        Set_RPM((max_rpm * i) / steps);
+        Set_Speed((max_speed * i) / steps);
+        Delay(step_delay);
+    }
+
+    Set_RPM(0);
+    Set_Speed(0);
+}
+
 int main(void) {
     USART_Init_Default();
     Speedo_Init();
@@ -42,7 +66,10 @@ int main(void) {
 
                         if (n_ign != current_ign) {
                             Ignition_Set(n_ign);
-                            if (n_ign == 0) {
+                            if (n_ign == 1) {
+                                Delay(150);
+                                Dashboard_Sweep();
+                            } else {
                                 Set_RPM(0);
                                 Set_Speed(0);
                                 Coolant_SetTemp(0);
