@@ -6,6 +6,6 @@
 #define PIN_COOLANT PD5 
 
 void Coolant_Init(void);
-void Coolant_SetTemp(uint8_t val);
+void Coolant_SetTemp(uint8_t temp_c);
 
 #endif

@@ -387,15 +387,7 @@ class CarSimulatorV2:
         if (now - self.last_serial_send) < self.serial_interval:
             return
 
-        wt = self.water_temp
-        if wt < 70:    ct = (wt / 70.0) * 23
-        elif wt < 75:  ct = 23  + ((wt - 70) / 5.0)  * 22
-        elif wt <= 85: ct = 45  + ((wt - 75) / 10.0) * 66
-        elif wt <= 95: ct = 111 + ((wt - 85) / 10.0) * 44
-        else:          ct = 155 + ((wt - 95) / 15.0) * 100
-        tmp_p = 255 - int(max(0, min(255, ct)))
-
-        packet = (f"<{int(round(spd))},{int(round(rpm_v))},{tmp_p},"
+        packet = (f"<{int(round(spd))},{int(round(rpm_v))},{int(self.water_temp)},"
                   f"{1 if self.ignition_on else 0},{1 if self.lights_on else 0}>\n")
         try:
             self.arduino.write(packet.encode('utf-8'))
