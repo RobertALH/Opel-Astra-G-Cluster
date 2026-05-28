@@ -1,13 +1,17 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
+#include <string.h>
 #include <delay.h>
 #include <gpio.h>
 #include <speedo.h>
 #include <tacho.h>
 #include <coolant.h>
 #include <relays.h>
+#include <usart.h>
 
 int main(void) {
+    USART_Init_Default();
     Speedo_Init();
     Tacho_Init();
     Coolant_Init();
@@ -21,21 +25,26 @@ int main(void) {
     Lights_Set(1);
     Delay(1000);
 
-    Set_RPM(3000);
-    Set_Speed(100);
-    Coolant_SetTemp(128);
-    Delay(5000);
-
-    Set_RPM(6000);
-    Set_Speed(200);
-    Coolant_SetTemp(128);
-    Delay(5000);
-
-    Set_RPM(800);
-    Set_Speed(20);
-    Coolant_SetTemp(128);
+    char buffer[MAX_SIZE_RECEIVE_USART];
+    int n_speed, n_rpm;
 
     while (1) {
+        int bytes = USART_Receive(buffer);
 
+        if (bytes > 0) {
+            char *start = strchr(buffer, '<');
+            if (start != NULL) {
+                start++;
+                char *end = strchr(start, '>');
+                if (end != NULL) {
+                    *end = '\0';
+                    if (sscanf(start, "%d,%d", &n_speed, &n_rpm) == 2) {
+                        Set_Speed(n_speed);
+                        Set_RPM(n_rpm);
+
+                    }
+                }
+            }
+        }
     }
 }
