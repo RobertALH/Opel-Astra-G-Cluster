@@ -485,8 +485,8 @@ class CarSimulatorV2:
                 gear_force= {1: 1.4, 2: 0.9, 3: 0.6, 4: 0.4, 5: 0.2}[self.gear]
                 accel     = pull * aero * rpm_mult * gear_force * throttle
                 if self.boost: accel *= 4.0
-                self.speed += accel
-                if self.rpm >= 7000: self.speed -= 0.5
+                if self.rpm < 7000.0:
+                    self.speed += accel
                 self.rpm = min(self.rpm, 7000.0)
             elif self.braking:
                 self.speed -= 1.5
